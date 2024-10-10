@@ -10,6 +10,7 @@ package model.item
  * @property activationCritique Le seuil d'activation pour les coups critiques.
  */
 class TypeArme(
+    var id: Int? = null,
     val nom: String,
     val nombreDes: Int,
     val valeurDeMax: Int,

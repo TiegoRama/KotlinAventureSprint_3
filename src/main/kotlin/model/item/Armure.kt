@@ -10,7 +10,7 @@ import model.personnage.Personnage
  * @param typeArmure Le type d'armure qui détermine ses caractéristiques (bonus de type, etc.).
  * @param qualite La qualité de l'armure qui influence les bonus de défense.
  */
-class Armure(nom: String, description: String, val typeArmure: TypeArmure, val qualite: Qualite) :
+class Armure(var id: Int? = null,nom: String, description: String, val typeArmure: TypeArmure, val qualite: Qualite) :
     Item(nom, description) {
     /**
      * Équipe l'armure sur un personnage, permettant au personnage d'augmenter sa défense.

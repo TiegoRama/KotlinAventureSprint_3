@@ -12,6 +12,7 @@ import model.personnage.Personnage
  * @param qualite La qualité de l'arme qui influence les dégâts infligés.
  */
 class Arme(
+    var id: Int? = null,
     nom: String,
     description: String,
     val type: TypeArme,
