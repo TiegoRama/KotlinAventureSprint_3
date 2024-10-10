@@ -1,3 +1,5 @@
+import dao.BombeDAO
+import dao.PotionDao
 import jdbc.BDD
 import model.jeu.Jeu
 import model.jeu.Sort
@@ -5,7 +7,9 @@ import model.jeu.TirageDes
 import model.item.*
 import model.personnage.Personnage
 import dao.QualiteDAO
+import dao.TypeArmeDAO
 import generateur.*
+
 
 //DEMO MISSION 1
 val generateurQualites = GenerateurQualites("assets/qualites.csv")
@@ -30,11 +34,20 @@ val monstres = GenerateurMonstres("assets/monstres.csv").generer()
 val coBDD = BDD()
 //instanciation d'un objet QualiteDAO
 val qualiteRepository = QualiteDAO(coBDD)
+val typeArmureRepository = TypeArmureDAO(coBDD)
 //
 //Sauvegarde des Qualites dans la BDD
 val qualites = qualiteRepository.saveAll(qualitesFromCSV.values)
+val typearmure = typeArmureRepository.saveAll(typeArmures.values)
 
+val typearmeRepository = TypeArmeDAO(coBDD)
 
+val typearmes = typearmeRepository.saveAll((typeArmes.values))
+
+val potionRepository = PotionDao(coBDD)
+val potion = potionRepository.saveAll(potions.values)
+val bombeRepository = BombeDAO(coBDD)
+val bombe = bombeRepository.saveAll(bombes.values)
 // instanciation des Sorts (pour le(s) mage(s))
 val sortDeFeu = Sort("Boule de Feu") { caster, cible ->
     run {
@@ -101,7 +114,7 @@ val sortInvocatinArme = Sort("Sort d'invocation d'arme magique") { caster, cible
             resultat <= 20 -> qualites["legendaire"]
             else -> qualites["commun"]
         }
-        val armeMagique = Arme("Epee magique", "Une arme magique", typeArmes["typeEpeeLongue"]!!, qualite!!)
+        val armeMagique = Arme(1,"Epee magique", "Une arme magique", typeArmes["typeEpeeLongue"]!!, qualite!!)
 
         cible.inventaire.add(armeMagique)
         println("${armeMagique} est ajouté a l'inventaire de ${cible.nom}")
@@ -119,7 +132,7 @@ val sortInvocatinArmure = Sort("Sort d'invocation d'armure magique") { caster, c
             resultat <= 20 -> qualites["legendaire"]
             else -> qualites["commun"]
         }
-        val armureMagique = Armure("Armure magique", "Une armure magique", typeArmures["armure en cuir"]!!, qualite!!)
+        val armureMagique = Armure(1,"Armure magique", "Une armure magique", typeArmures["armure en cuir"]!!, qualite!!)
 
         cible.inventaire.add(armureMagique)
         println("${armureMagique} est ajouté a l'inventaire de ${cible.nom}")

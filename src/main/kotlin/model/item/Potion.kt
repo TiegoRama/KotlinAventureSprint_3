@@ -10,6 +10,7 @@ import model.personnage.Personnage
  * @param soin La quantité de points de vie que la potion peut restaurer.
  */
 class Potion(
+    var id :Int? = null,
     nom: String,
     description: String,
     val soin: Int

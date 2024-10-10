@@ -1,61 +1,68 @@
+package dao
+
+import coBDD
 import jdbc.BDD
-import model.item.Armure
-import model.item.TypeArmure
+import model.item.Arme
+import model.item.Potion
+import model.item.Qualite
 import java.sql.PreparedStatement
 import java.sql.SQLException
 import java.sql.Statement
 
-class TypeArmureDAO(val bdd: BDD =coBDD ) {
+class PotionDao (val bdd: BDD =coBDD){ 
+    fun findAll(): MutableMap<String, Potion> {
+        val result = mutableMapOf<String, Potion>()
 
-    fun findAll(): MutableMap<String, TypeArmure> {
-        val result = mutableMapOf<String, TypeArmure>()
-
-        val sql = "SELECT * FROM typeArmure"
+        val sql = "SELECT * FROM Potion"
         val requetePreparer = this.bdd.connectionBDD!!.prepareStatement(sql)
         val resultatRequete = this.bdd.executePreparedStatement(requetePreparer)
         if (resultatRequete != null) {
             while (resultatRequete.next()) {
-                val id = resultatRequete.getInt("type_Armure_id")
+                val id = resultatRequete.getInt("id")
                 val nom = resultatRequete.getString("nom")
-                val bonusType = resultatRequete.getInt("bonusRarete")
-                result.set(nom.lowercase(), TypeArmure(id, nom, bonusType))
+                val description = resultatRequete.getString("couleur")
+                val soins = resultatRequete.getInt("soin")
+
+
+
+                result.set(nom.lowercase(), Potion(id, nom, description,soins))
             }
         }
         requetePreparer.close()
         return result
     }
+    fun findByNom(nomRechecher:String): MutableMap<String, Potion> {
+        val result = mutableMapOf<String, Potion>()
 
-    fun findByNom(nomRechecher: String): MutableMap<String, TypeArmure> {
-        val result = mutableMapOf<String, TypeArmure>()
-
-        val sql = "SELECT * FROM typeArmure WHERE nom=?"
+        val sql = "SELECT * FROM Potion WHERE nom=?"
         val requetePreparer = this.bdd.connectionBDD!!.prepareStatement(sql)
         requetePreparer?.setString(1, nomRechecher)
         val resultatRequete = this.bdd.executePreparedStatement(requetePreparer)
         if (resultatRequete != null) {
             while (resultatRequete.next()) {
-                val id = resultatRequete.getInt("type_Armure_id")
-                val nom = resultatRequete.getString("nom")
-                val bonusType = resultatRequete.getInt("bonusRarete")
-                result.set(nom.lowercase(), TypeArmure(id, nom, bonusType))
+                val  id =resultatRequete.getInt("id")
+                val nom=resultatRequete.getString("nom")
+                val description= resultatRequete.getString("description")
+                val soins= resultatRequete.getInt("soin")
+                result.set(nom.lowercase(), Potion(id,nom,description,soins))
             }
         }
         requetePreparer.close()
         return result
     }
-
-    fun findById(id: Int): TypeArmure? {
-        var result: TypeArmure? = null
-        val sql = "SELECT * FROM typeArmure WHERE id=?"
+    fun findById(id:Int): Potion? {
+        var result : Potion?=null
+        val sql = "SELECT * FROM Potion WHERE id=?"
         val requetePreparer = this.bdd.connectionBDD!!.prepareStatement(sql)
         requetePreparer?.setString(1, id.toString())
         val resultatRequete = this.bdd.executePreparedStatement(requetePreparer)
         if (resultatRequete != null) {
             while (resultatRequete.next()) {
-                val id = resultatRequete.getInt("type_Armure_id")
-                val nom = resultatRequete.getString("nom")
-                val bonusType = resultatRequete.getInt("bonusRarete")
-                result = TypeArmure(id, nom, bonusType)
+                val  id =resultatRequete.getInt("id")
+                val nom=resultatRequete.getString("nom")
+                val description = resultatRequete.getString("description")
+                val soin= resultatRequete.getInt("soin")
+                result= Potion(id,nom,description,soin)
                 requetePreparer.close()
                 return result
             }
@@ -63,26 +70,27 @@ class TypeArmureDAO(val bdd: BDD =coBDD ) {
         requetePreparer.close()
         return result
     }
+    fun save(unPotion: Potion): Potion? {
 
-    fun save(uneTypeArmure: TypeArmure): TypeArmure? {
+        val requetePreparer:PreparedStatement
 
-        val requetePreparer: PreparedStatement
-
-        if (uneTypeArmure.id == null) {
+        if (unPotion.id == null) {
             val sql =
-                "Insert Into typeArmure (nom,bonusType) values (?,?,?)"
+                "Insert Into Potion (nom,description ,soin) values (?,?,?)"
             requetePreparer = this.bdd.connectionBDD!!.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
-            requetePreparer?.setString(1, uneTypeArmure.nom)
-            requetePreparer?.setInt(2, uneTypeArmure.bonusType)
+            requetePreparer?.setString(1, unPotion.nom)
+            requetePreparer?.setString(2, unPotion.description)
+            requetePreparer?.setInt(3, unPotion.soin)
+
         } else {
             var sql = ""
             sql =
-                "Update  TypeArmure set nom=?,bonusRarete=?,couleur=? where id=?"
+                "Update  Potion set nom=?,bonusRarete=?,couleur=? where id=?"
             requetePreparer = this.bdd.connectionBDD!!.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+            requetePreparer?.setString(1, unPotion.nom)
+            requetePreparer?.setString(2, unPotion.description)
+            requetePreparer?.setInt(3, unPotion.soin)
 
-            requetePreparer?.setString(1, uneTypeArmure.nom)
-            requetePreparer?.setInt(2, uneTypeArmure.bonusType)
-            requetePreparer?.setInt(4, uneTypeArmure.id!!)
         }
 
 
@@ -96,36 +104,34 @@ class TypeArmureDAO(val bdd: BDD =coBDD ) {
             val generatedKeys = requetePreparer.generatedKeys
             if (generatedKeys.next()) {
                 val id = generatedKeys.getInt(1) // Supposons que l'ID est la première col
-                uneTypeArmure.id = id // Mettez à jour l'ID de l'objet TypeArmure avec la valeur générée
-                return uneTypeArmure
+                unPotion.id = id // Mettez à jour l'ID de l'objet Qualite avec la valeur générée
+                return unPotion
             }
         }
-
         requetePreparer.close()
 
         return null
     }
-    fun saveAll(lesTypeArmures: Collection<TypeArmure>): MutableMap<String, TypeArmure> {
-        var result = mutableMapOf<String, TypeArmure>()
-        for (uneTypeArmure in lesTypeArmures) {
-            val TypeArmureSauvegarde = this.save(uneTypeArmure)
-            if (TypeArmureSauvegarde != null) {
-                result.set(TypeArmureSauvegarde.nom.lowercase(), TypeArmureSauvegarde)
+    fun saveAll(lesPotions:Collection<Potion>):MutableMap<String, Potion>{
+        var result= mutableMapOf<String, Potion>()
+        for (unePotion in lesPotions){
+            val potionSauvegarde=this.save(unePotion)
+            if (potionSauvegarde!=null){
+                result.set(potionSauvegarde.nom.lowercase(),potionSauvegarde)
             }
         }
         return result
     }
-
     fun deleteById(id: Int): Boolean {
-        val sql = "DELETE FROM TypeArmure WHERE id = ?"
+        val sql = "DELETE FROM Potion WHERE id = ?"
         val requetePreparer = this.bdd.connectionBDD!!.prepareStatement(sql)
         requetePreparer?.setInt(1, id)
         try {
             val nbLigneMaj = requetePreparer?.executeUpdate()
             requetePreparer.close()
-            if (nbLigneMaj != null && nbLigneMaj > 0) {
+            if(nbLigneMaj!=null && nbLigneMaj>0){
                 return true
-            } else {
+            }else{
                 return false
             }
         } catch (erreur: SQLException) {
@@ -133,4 +139,6 @@ class TypeArmureDAO(val bdd: BDD =coBDD ) {
             return false
         }
     }
+
 }
+

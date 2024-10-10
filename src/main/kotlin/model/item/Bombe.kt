@@ -11,7 +11,7 @@ import model.personnage.Personnage
  * @param nombreDeDes Le nombre de dés à lancer pour déterminer les dégâts.
  * @param maxDe La valeur maximale d'un dé lancé pour calculer les dégâts.
  */
-class Bombe(nom: String, description: String, val nombreDeDes: Int, val maxDe: Int) : Item(nom, description) {
+class Bombe(var id :Int? = null,nom: String, description: String, val nombreDeDes: Int, val maxDe: Int) : Item(nom, description) {
     /**
      * Utilise la bombe pour infliger des dégâts à un personnage en lançant un certain nombre de dés.
      * Les dégâts infligés sont calculés en soustrayant la défense de la cible.
