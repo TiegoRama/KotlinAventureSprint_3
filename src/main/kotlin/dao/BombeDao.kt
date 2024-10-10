@@ -12,27 +12,27 @@ import java.sql.Statement
  *
  * @param bdd L'objet de base de données à utiliser pour les opérations de base de données.
  */
-class BombeDAO(val bdd: BDD=coBDD ) {
+class BombeDao(val bdd: BDD=coBDD ) {
 
     /**
      * Recherche et retourne toutes les qualités de la base de données.
      *
      * @return Une liste de toutes les qualités trouvées.
      */
-    fun findAll(): MutableMap<String,Bombe> {
-        val result = mutableMapOf<String,Bombe>()
+    fun findAll(): MutableMap<String, Bombe> {
+        val result = mutableMapOf<String, Bombe>()
 
         val sql = "SELECT * FROM Bombe"
         val requetePreparer = this.bdd.connectionBDD!!.prepareStatement(sql)
         val resultatRequete = this.bdd.executePreparedStatement(requetePreparer)
         if (resultatRequete != null) {
             while (resultatRequete.next()) {
-                val  id = resultatRequete.getInt("id_bombe")
+                val id = resultatRequete.getInt("id_bombe")
                 val nom = resultatRequete.getString("nom")
                 val description = resultatRequete.getString("description")
                 val MaxDe = resultatRequete.getInt("maxDe")
                 val nombreDeDes = resultatRequete.getInt("nombreDeDes")
-                result.set(nom.lowercase(),Bombe(id,nom,description,MaxDe,nombreDeDes))
+                result.set(nom.lowercase(), Bombe(id, nom, description, MaxDe, nombreDeDes))
             }
         }
         requetePreparer.close()
@@ -45,8 +45,8 @@ class BombeDAO(val bdd: BDD=coBDD ) {
      * @param nomRechecher Le nom à rechercher.
      * @return La première bombe correspondant au nom donné, ou null si aucune n'est trouvée.
      */
-    fun findByNom(nomRechecher:String): MutableMap<String,Bombe> {
-        val result = mutableMapOf<String,Bombe>()
+    fun findByNom(nomRechecher: String): MutableMap<String, Bombe> {
+        val result = mutableMapOf<String, Bombe>()
 
         val sql = "SELECT * FROM Bombe WHERE nom=?"
         val requetePreparer = this.bdd.connectionBDD!!.prepareStatement(sql)
@@ -54,12 +54,12 @@ class BombeDAO(val bdd: BDD=coBDD ) {
         val resultatRequete = this.bdd.executePreparedStatement(requetePreparer)
         if (resultatRequete != null) {
             while (resultatRequete.next()) {
-                val  id = resultatRequete.getInt("id_bombe")
+                val id = resultatRequete.getInt("id_bombe")
                 val nom = resultatRequete.getString("nom")
                 val description = resultatRequete.getString("description")
                 val nombreDeDes = resultatRequete.getInt("nombreDeDes")
                 val MaxDe = resultatRequete.getInt("maxDe")
-                result.set(nom.lowercase(),Bombe(id,nom,description,MaxDe,nombreDeDes))
+                result.set(nom.lowercase(), Bombe(id, nom, description, MaxDe, nombreDeDes))
             }
         }
         requetePreparer.close()
@@ -72,20 +72,20 @@ class BombeDAO(val bdd: BDD=coBDD ) {
      * @param Int L'id à rechercher.
      * @return La première qualité correspondant au nom donné, ou null si aucune n'est trouvée.
      */
-    fun findById(id:Int): Bombe? {
-        var result :Bombe?=null
+    fun findById(id: Int): Bombe? {
+        var result: Bombe? = null
         val sql = "SELECT * FROM Bombe WHERE id=?"
         val requetePreparer = this.bdd.connectionBDD!!.prepareStatement(sql)
         requetePreparer?.setString(1, id.toString())
         val resultatRequete = this.bdd.executePreparedStatement(requetePreparer)
         if (resultatRequete != null) {
             while (resultatRequete.next()) {
-                val  id = resultatRequete.getInt("id_bombe")
+                val id = resultatRequete.getInt("id_bombe")
                 val nom = resultatRequete.getString("nom")
                 val description = resultatRequete.getString("description")
                 val MaxDe = resultatRequete.getInt("maxDe")
-                val nombreDeDes =resultatRequete.getInt("nombreDeDes")
-                result=Bombe(id,nom,description,MaxDe,nombreDeDes)
+                val nombreDeDes = resultatRequete.getInt("nombreDeDes")
+                result = Bombe(id, nom, description, MaxDe, nombreDeDes)
                 requetePreparer.close()
                 return result
             }
@@ -93,6 +93,7 @@ class BombeDAO(val bdd: BDD=coBDD ) {
         requetePreparer.close()
         return result
     }
+
     /**
      * Sauvegarde une qualité dans la base de données.
      *
@@ -101,7 +102,7 @@ class BombeDAO(val bdd: BDD=coBDD ) {
      */
     fun save(uneBombe: Bombe): Bombe? {
 
-        val requetePreparer:PreparedStatement
+        val requetePreparer: PreparedStatement
 
         if (uneBombe.id == null) {
             val sql =
@@ -149,12 +150,12 @@ class BombeDAO(val bdd: BDD=coBDD ) {
      * @param lesBombes La liste des objets Bombe à sauvegarder.
      * @return Une liste des objets Bombe sauvegardés, y compris leurs ID générés, ou null en cas d'échec.
      */
-    fun saveAll(lesBombes:Collection<Bombe>):MutableMap<String,Bombe>{
-        var result= mutableMapOf<String,Bombe>()
-        for (uneBombe in lesBombes){
-            val BombeSauvegarde=this.save(uneBombe)
-            if (BombeSauvegarde!=null){
-                result.set(BombeSauvegarde.nom.lowercase(),BombeSauvegarde)
+    fun saveAll(lesBombes: Collection<Bombe>): MutableMap<String, Bombe> {
+        var result = mutableMapOf<String, Bombe>()
+        for (uneBombe in lesBombes) {
+            val BombeSauvegarde = this.save(uneBombe)
+            if (BombeSauvegarde != null) {
+                result.set(BombeSauvegarde.nom.lowercase(), BombeSauvegarde)
             }
         }
         return result
@@ -173,9 +174,9 @@ class BombeDAO(val bdd: BDD=coBDD ) {
         try {
             val nbLigneMaj = requetePreparer?.executeUpdate()
             requetePreparer.close()
-            if(nbLigneMaj!=null && nbLigneMaj>0){
+            if (nbLigneMaj != null && nbLigneMaj > 0) {
                 return true
-            }else{
+            } else {
                 return false
             }
         } catch (erreur: SQLException) {
